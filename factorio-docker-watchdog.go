@@ -18,7 +18,7 @@ func main() {
 	if err != nil {
 		logrus.Error(err)
 	}
-	latestVersionProceeded[fmt.Sprintf("%d.%d", versionFill.Major, versionFill.Minor)] = versionFill.String()
+	latestVersionProceeded[fmt.Sprintf("%d.%d.%d", versionFill.Major, versionFill.Minor, versionFill.Bugfix)] = versionFill.String()
 
 	err = gitSetupCredentials()
 	if err != nil {
@@ -64,7 +64,7 @@ func checkVersion() {
 			firstRun = false
 		}
 
-		if lastVersion.Major != version.Major || lastVersion.Minor != version.Minor {
+		if lastVersion.Major != version.Major || lastVersion.Minor != version.Minor || lastVersion.Bugfix != version.version.Bugfix {
 			lastVersions = append(lastVersions, lastVersion)
 		} else if i+1 == len(versions) {
 			lastVersions = append(lastVersions, version)
@@ -86,7 +86,7 @@ func checkVersion() {
 			}
 		}
 
-		key := fmt.Sprintf("%d.%d", tagVersion.Major, tagVersion.Minor)
+		key := fmt.Sprintf("%d.%d.%d", tagVersion.Major, tagVersion.Minor, tagVersion.Bugfix)
 		if val, ok := latestVersionProceeded[key]; ok {
 			if val == tagVersion.String() {
 				logrus.Info("Delete ", tagVersion.String(), " from latest proceeded")
@@ -99,7 +99,7 @@ func checkVersion() {
 		if version.Major == 0 && version.Minor < 16 {
 			continue
 		}
-		key := fmt.Sprintf("%d.%d", version.Major, version.Minor)
+		key := fmt.Sprintf("%d.%d.%d", version.Major, version.Minor, version.Bugfix)
 
 		logrus.Info(latestVersionProceeded)
 		if val, ok := latestVersionProceeded[key]; ok {
@@ -116,7 +116,7 @@ func checkVersion() {
 
 func updateVersion(version semver.Version) {
 	logrus.Info("Start ", version.String())
-	latestVersionProceeded[fmt.Sprintf("%d.%d", version.Major, version.Minor)] = version.String()
+	latestVersionProceeded[fmt.Sprintf("%d.%d.%d", version.Major, version.Minor, version.Bugfix)] = version.String()
 	pathRepo := fmt.Sprintf("/tmp/factorio-%s-repo", version)
 
 	defer func() {
